@@ -6,6 +6,9 @@
 	                         * 乱数 : random (default)
 	                         * 正弦波 : sin
 	                         * 余弦波 : cos
+	                         * 三角波 : triangle
+	                         * 矩形波 : square
+	                         * 鋸波   : sawtooth
 	  --csv CSV            出力csvファイル
 	  --png PNG            出力pngファイル
 	  --freq FREQ          生成する波形の周波数[Hz](default=1.0Hz)

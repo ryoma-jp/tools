@@ -37,7 +37,10 @@ def ArgParser():
 			help='波形の種類 \n'
 			'  * 乱数 : random (default) \n'
 			'  * 正弦波 : sin \n'
-			'  * 余弦波 : cos \n', required=False)
+			'  * 余弦波 : cos \n'
+			'  * 三角波 : triangle \n'
+			'  * 矩形波 : square \n'
+			'  * 鋸波   : sawtooth \n', required=False)
 	parser.add_argument('--csv', dest='csv', type=str, default=None, help='出力csvファイル', required=False)
 	parser.add_argument('--png', dest='png', type=str, default=None, help='出力pngファイル', required=False)
 	parser.add_argument('--freq', dest='freq', type=float, default=FREQ_DEFAULT, \
