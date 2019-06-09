@@ -1,11 +1,12 @@
 
+TARGET = sample
 SRCS = sample/sample.py sample/submodule.py
 OPT = --onefile
 INSTALL_DIR = ./bin
 
 .PHONY: all
 all:
-	pyinstaller $(SRCS) $(OPT)
+	pyinstaller $(SRCS) $(OPT) --name $(TARGET)
 	
 .PHONY: clean
 clean:
