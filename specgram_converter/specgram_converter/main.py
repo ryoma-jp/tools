@@ -3,6 +3,7 @@
 #---------------------------------
 # モジュールのインポート
 #---------------------------------
+import io
 import os
 import sys
 import argparse
@@ -18,6 +19,7 @@ from scipy import fftpack as sp_fftpack
 # 定数定義
 #---------------------------------
 RELATION_CSV_NAME = 'relation.csv'
+LABEL_TXT_NAME = 'label.txt'
 
 #---------------------------------
 # 関数
@@ -52,6 +54,10 @@ def ArgParser():
 			help='スペクトログラム出力の最大周波数')
 	parser.add_argument('--specgram_mode', dest='specgram_mode', type=str, default='psd', required=False, \
 			help='スペクトログラムの表現形式(psd or magnitude)')
+	parser.add_argument('--label_kwd', dest='label_kwd', type=str, default=None, required=False, \
+			help='キーワードをもとにラベル付けを行う\n'
+				 '入力csvファイル名からキーワードを抽出する為，入力csvにあらかじめ付与しておくこと\n'
+				 'ラベル付けされたファイルは{}として出力ディレクトリ以下に格納される'.format(LABEL_TXT_NAME))
 	
 	args = parser.parse_args()
 	
@@ -80,6 +86,12 @@ class CSVtoSpectrogram():
 			# --- 入力csvファイルまたはcsvファイルリストはどちらか指定が必要 ---
 			print('[ERROR] --input_csv, --input_csv_listまたは--input_csv_dirのいずれかは必ず指定が必要')
 			quit()
+
+		# --- ラベル付けキーワードを抽出 ---
+		if (args.label_kwd is None):
+			self.label_kwd = None
+		else:
+			self.label_kwd = pd.read_csv(io.StringIO(args.label_kwd), header=None, skipinitialspace=True).values[0]
 		
 		# --- 変数値を設定 ---
 		self.n_fft = args.n_fft
@@ -116,6 +128,7 @@ class CSVtoSpectrogram():
 			return time, data, fs, duration
 			
 		relation_csv = pd.DataFrame()
+		label_txt = []
 		for csv_idx, input_csv in enumerate(self.input_csv):
 			# --- csvファイル読み込み ---
 			time, data, fs, duration = _load_csv(input_csv)
@@ -183,8 +196,19 @@ class CSVtoSpectrogram():
 			# --- 入出力の関連付けを追加 ---
 			relation_csv = relation_csv.append([[input_csv, 'specgram_{:06d}'.format(csv_idx)]])
 
+			# --- ラベル抽出 ---
+			if (self.label_kwd is not None):
+				for label, kwd in enumerate(self.label_kwd):
+					if (input_csv.find(kwd) >= 0):
+						label_txt.append(label)
+						break
+
 		# --- 入出力関連付けファイルを保存 ---
 		relation_csv.to_csv(os.path.join(self.output_dir, RELATION_CSV_NAME), index=None, header=['input csv', 'output prefix'])
+
+		# --- ラベル付けファイルを保存 ---
+		if (self.label_kwd is not None):
+			pd.DataFrame([label_txt]).to_csv(os.path.join(self.output_dir, LABEL_TXT_NAME), index=None, header=None)
 			
 		return
 	
