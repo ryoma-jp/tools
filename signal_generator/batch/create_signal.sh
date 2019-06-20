@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# optional arguments:
+# optional arguments for signal generator:
 #   -h, --help           show this help message and exit
 #   --type TYPE          波形の種類
 #                          * 乱数 : random (default)
