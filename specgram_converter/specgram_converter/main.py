@@ -10,6 +10,7 @@ import argparse
 import csv
 import glob
 import struct
+import tqdm
 import cv2
 import numpy as np
 import pandas as pd
@@ -129,7 +130,7 @@ class CSVtoSpectrogram():
 			
 		relation_csv = pd.DataFrame()
 		label_txt = []
-		for csv_idx, input_csv in enumerate(self.input_csv):
+		for csv_idx, input_csv in enumerate(tqdm.tqdm(self.input_csv)):
 			# --- csvファイル読み込み ---
 			time, data, fs, duration = _load_csv(input_csv)
 			
@@ -208,7 +209,8 @@ class CSVtoSpectrogram():
 
 		# --- ラベル付けファイルを保存 ---
 		if (self.label_kwd is not None):
-			pd.DataFrame([label_txt]).to_csv(os.path.join(self.output_dir, LABEL_TXT_NAME), index=None, header=None)
+			header = [self.label_kwd[_kwd] for _kwd in label_txt]
+			pd.DataFrame([label_txt]).to_csv(os.path.join(self.output_dir, LABEL_TXT_NAME), index=None, header=header)
 			
 		return
 	

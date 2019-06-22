@@ -64,11 +64,9 @@ if __name__ == '__main__':
 		img = cv2.imread(input_img, cv2.IMREAD_GRAYSCALE)
 		img_data = np.vstack((img_data, img.reshape(img.shape[0]*img.shape[1])))
 	img_data = img_data / 255.0
-	print(img_data.shape)
 
-	# --- 入力ラベル取得 ---
-	input_labels = pd.read_csv(args.input_label, header=None).values[0]
-	print(input_labels)
+	# --- 入力ラベル取得: 1行目ラベル名，2行目ラベル値 ---
+	input_labels = pd.read_csv(args.input_label, header=None).values
 
 	# --- 出力ディレクトリ生成 ---
 	os.makedirs(args.output_dir, exist_ok=True)
@@ -79,7 +77,7 @@ if __name__ == '__main__':
 	for perplexity in tqdm.tqdm(perplexities):
 		data_reduced = tsne.tsne(img_data, perplexity=perplexity)
 		if (args.output_suffix is not None):
-			g.scatter(data_reduced[:, 0], data_reduced[:, 1], label=input_labels, savefile=os.path.join(args.output_dir, 'tsne-perplexity{}-{}.png'.format(perplexity, args.output_suffix)))
+			g.scatter(data_reduced[:, 0], data_reduced[:, 1], label_idx=input_labels[1], label_name=input_labels[0], savefile=os.path.join(args.output_dir, 'tsne-perplexity{}-{}.png'.format(perplexity, args.output_suffix)))
 		else:
-			g.scatter(data_reduced[:, 0], data_reduced[:, 1], label=input_labels, savefile=os.path.join(args.output_dir, 'tsne-perplexity{}.png'.format(perplexity)))
+			g.scatter(data_reduced[:, 0], data_reduced[:, 1], label_idx=input_labels[1], label_name=input_labels[0], savefile=os.path.join(args.output_dir, 'tsne-perplexity{}.png'.format(perplexity)))
 
