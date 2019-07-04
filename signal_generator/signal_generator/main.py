@@ -20,6 +20,8 @@ from ryoma_util.signal_generator import signal_generator
 FREQ_DEFAULT = 1.0	# 周波数のデフォルト値
 FS_DEFAULT = 8000	# サンプリング周波数のデフォルト値
 DURATION_DEFAULT = 1.0		# 波形の時間長のデフォルト値
+PHASE_DEFAULT = 0.0		# 位相のデフォルト値
+AMPLITUDE_DEFAULT = 1.0		# 振幅のデフォルト値
 
 #---------------------------------
 # 関数
@@ -49,6 +51,10 @@ def ArgParser():
 			help='生成する波形のサンプリング周波数[Hz](default={}Hz)'.format(FS_DEFAULT), required=False)
 	parser.add_argument('--duration', dest='duration', type=float, default=DURATION_DEFAULT, \
 			help='生成する波形の長さ[sec](default={}sec)'.format(DURATION_DEFAULT), required=False)
+	parser.add_argument('--phase', dest='phase', type=float, default=PHASE_DEFAULT, \
+			help='位相[rad](default=0rad)'.format(PHASE_DEFAULT), required=False)
+	parser.add_argument('--amplitude', dest='amplitude', type=float, default=AMPLITUDE_DEFAULT, \
+			help='振幅(default=1.0)'.format(AMPLITUDE_DEFAULT), required=False)
 	
 	args = parser.parse_args()
 	
@@ -62,7 +68,7 @@ if __name__ == '__main__':
 	args = ArgParser()
 
 	# --- 波形生成 ---
-	sg = signal_generator.SignalGenerator(args.csv, args.png, args.freq, args.fs, args.duration)
+	sg = signal_generator.SignalGenerator(args.csv, args.png, args.freq, args.fs, args.duration, args.phase, args.amplitude)
 	if (args.type == 'random'):
 		sg.random()
 	elif (args.type == 'sin'):
